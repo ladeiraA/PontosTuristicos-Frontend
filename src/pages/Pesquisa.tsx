@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
@@ -14,11 +14,12 @@ const Pesquisa: React.FC = () => {
   const [carregando, setCarregando] = useState(false);
   const [buscaRealizada, setBuscaRealizada] = useState(false);
 
-  const handleBuscar = async () => {
+  // Função reutilizável para carregar pontos
+  const carregarPontos = async (termoBusca: string = '') => {
     setCarregando(true);
     setBuscaRealizada(true);
     try {
-      const resultados = await buscarPontosTuristicos(termo);
+      const resultados = await buscarPontosTuristicos(termoBusca);
       setPontos(resultados);
     } catch (error) {
       alert('Erro ao buscar pontos turísticos. Verifique sua conexão e tente novamente.');
@@ -26,6 +27,15 @@ const Pesquisa: React.FC = () => {
     } finally {
       setCarregando(false);
     }
+  };
+
+  // Busca automática ao carregar a página
+  useEffect(() => {
+    carregarPontos();
+  }, []);
+
+  const handleBuscar = async () => {
+    carregarPontos(termo);
   };
 
   const handleCadastrar = () => {
