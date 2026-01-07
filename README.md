@@ -100,11 +100,6 @@ src/
 - `PUT /api/PontosTuristicos/{id}` - Atualizar ponto turístico existente
 - `DELETE /api/PontosTuristicos/{id}` - Excluir ponto turístico
 
-## 📝 Notas
-
-- A aplicação não utiliza bibliotecas de gerenciamento de estado como Redux
-- CSS simples e funcional, focado na usabilidade
-
 ## 🔍 Scripts Disponíveis
 
 - `npm start` - Executa em modo desenvolvimento
