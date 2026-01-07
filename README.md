@@ -95,8 +95,10 @@ src/
 
 ## 🌐 Endpoints da API
 
-- `GET /api/PontosTuristicos?termo=` - Buscar pontos turísticos
+- `GET /api/PontosTuristicos?termo={termo}` - Buscar pontos turísticos (termo opcional)
 - `POST /api/PontosTuristicos` - Cadastrar novo ponto turístico
+- `PUT /api/PontosTuristicos/{id}` - Atualizar ponto turístico existente
+- `DELETE /api/PontosTuristicos/{id}` - Excluir ponto turístico
 
 ## 📝 Notas
 
