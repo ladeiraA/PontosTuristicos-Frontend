@@ -34,3 +34,24 @@ export const cadastrarPontoTuristico = async (ponto: NovoPontoTuristico): Promis
     throw error;
   }
 };
+
+// Função para atualizar um ponto turístico existente
+export const atualizarPontoTuristico = async (id: number, ponto: NovoPontoTuristico): Promise<PontoTuristico> => {
+  try {
+    const response = await api.put<PontoTuristico>(`/PontosTuristicos/${id}`, ponto);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao atualizar ponto turístico:', error);
+    throw error;
+  }
+};
+
+// Função para excluir um ponto turístico
+export const excluirPontoTuristico = async (id: number): Promise<void> => {
+  try {
+    await api.delete(`/PontosTuristicos/${id}`);
+  } catch (error) {
+    console.error('Erro ao excluir ponto turístico:', error);
+    throw error;
+  }
+};

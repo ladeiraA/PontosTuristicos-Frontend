@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { NovoPontoTuristico } from '../types/PontoTuristico';
+import React, { useState, useEffect } from 'react';
+import { NovoPontoTuristico, PontoTuristico } from '../types/PontoTuristico';
 import './FormularioPonto.css';
 
 interface FormularioPontoProps {
   onSubmit: (ponto: NovoPontoTuristico) => Promise<void>;
   onCancelar: () => void;
+  pontoInicial?: PontoTuristico | null;
 }
 
 const ESTADOS_BRASIL = [
@@ -13,13 +14,24 @@ const ESTADOS_BRASIL = [
   'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
 ];
 
-const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar }) => {
+const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar, pontoInicial }) => {
   const [nome, setNome] = useState('');
   const [cidade, setCidade] = useState('');
   const [estado, setEstado] = useState('');
   const [referencia, setReferencia] = useState('');
   const [descricao, setDescricao] = useState('');
   const [enviando, setEnviando] = useState(false);
+
+  // Carrega os dados iniciais quando está editando
+  useEffect(() => {
+    if (pontoInicial) {
+      setNome(pontoInicial.nome);
+      setCidade(pontoInicial.cidade);
+      setEstado(pontoInicial.estado);
+      setReferencia(pontoInicial.referencia);
+      setDescricao(pontoInicial.descricao);
+    }
+  }, [pontoInicial]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

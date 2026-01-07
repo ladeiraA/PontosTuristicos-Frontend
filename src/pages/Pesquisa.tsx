@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import ListaResultados from '../components/ListaResultados';
 import { PontoTuristico } from '../types/PontoTuristico';
-import { buscarPontosTuristicos } from '../api/pontosTuristicosApi';
+import { buscarPontosTuristicos, excluirPontoTuristico } from '../api/pontosTuristicosApi';
 import './Pesquisa.css';
 
 const Pesquisa: React.FC = () => {
@@ -32,6 +32,20 @@ const Pesquisa: React.FC = () => {
     navigate('/cadastro');
   };
 
+  const handleEditar = (id: number) => {
+    navigate(`/cadastro/${id}`);
+  };
+
+  const handleExcluir = async (id: number) => {
+    try {
+      await excluirPontoTuristico(id);
+      // Remove o item da lista sem recarregar
+      setPontos(pontos.filter(ponto => ponto.id !== id));
+    } catch (error) {
+      alert('Erro ao excluir ponto turístico. Tente novamente.');
+    }
+  };
+
   return (
     <div className="page-pesquisa">
       <Header />
@@ -45,6 +59,8 @@ const Pesquisa: React.FC = () => {
         pontos={pontos}
         carregando={carregando}
         buscaRealizada={buscaRealizada}
+        onEditar={handleEditar}
+        onExcluir={handleExcluir}
       />
     </div>
   );

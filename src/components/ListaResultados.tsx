@@ -7,9 +7,17 @@ interface ListaResultadosProps {
   pontos: PontoTuristico[];
   carregando: boolean;
   buscaRealizada: boolean;
+  onEditar: (id: number) => void;
+  onExcluir: (id: number) => void;
 }
 
-const ListaResultados: React.FC<ListaResultadosProps> = ({ pontos, carregando, buscaRealizada }) => {
+const ListaResultados: React.FC<ListaResultadosProps> = ({ 
+  pontos, 
+  carregando, 
+  buscaRealizada,
+  onEditar,
+  onExcluir 
+}) => {
   if (carregando) {
     return (
       <div className="lista-container">
@@ -48,7 +56,12 @@ const ListaResultados: React.FC<ListaResultadosProps> = ({ pontos, carregando, b
       </div>
       <div className="lista-resultados">
         {pontos.map((ponto) => (
-          <ItemResultado key={ponto.id} ponto={ponto} />
+          <ItemResultado 
+            key={ponto.id} 
+            ponto={ponto}
+            onEditar={onEditar}
+            onExcluir={onExcluir}
+          />
         ))}
       </div>
     </div>

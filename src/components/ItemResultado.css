@@ -24,11 +24,52 @@
   margin: 0;
   color: #2c3e50;
   font-size: 1.4rem;
+  flex: 1;
+}
+
+.item-header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .item-data {
   color: #7f8c8d;
   font-size: 0.9rem;
+}
+
+.item-acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-acao {
+  background: none;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn-editar {
+  color: #3498db;
+}
+
+.btn-editar:hover {
+  background-color: #e3f2fd;
+  color: #2980b9;
+}
+
+.btn-excluir {
+  color: #e74c3c;
+}
+
+.btn-excluir:hover {
+  background-color: #ffebee;
+  color: #c0392b;
 }
 
 .item-localizacao {
