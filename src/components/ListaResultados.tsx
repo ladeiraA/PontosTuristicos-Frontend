@@ -1,6 +1,7 @@
 import React from 'react';
 import { PontoTuristico } from '../types/PontoTuristico';
 import ItemResultado from './ItemResultado';
+import Paginacao from './Paginacao';
 import './ListaResultados.css';
 
 interface ListaResultadosProps {
@@ -9,6 +10,11 @@ interface ListaResultadosProps {
   buscaRealizada: boolean;
   onEditar: (id: number) => void;
   onExcluir: (id: number) => void;
+  // Props de paginação
+  paginaAtual?: number;
+  totalPaginas?: number;
+  totalItens?: number;
+  onMudarPagina?: (pagina: number) => void;
 }
 
 const ListaResultados: React.FC<ListaResultadosProps> = ({ 
@@ -16,7 +22,11 @@ const ListaResultados: React.FC<ListaResultadosProps> = ({
   carregando, 
   buscaRealizada,
   onEditar,
-  onExcluir 
+  onExcluir,
+  paginaAtual,
+  totalPaginas,
+  totalItens,
+  onMudarPagina
 }) => {
   if (carregando) {
     return (
@@ -36,7 +46,7 @@ const ListaResultados: React.FC<ListaResultadosProps> = ({
     );
   }
 
-  if (pontos.length === 0) {
+  if (!pontos || pontos.length === 0) {
     return (
       <div className="lista-container">
         <div className="mensagem-vazio">
@@ -51,11 +61,12 @@ const ListaResultados: React.FC<ListaResultadosProps> = ({
       <div className="lista-header">
         <h2>Resultados da Busca</h2>
         <span className="lista-total">
-          {pontos.length} {pontos.length === 1 ? 'ponto encontrado' : 'pontos encontrados'}
+          {totalItens !== undefined ? totalItens : (pontos?.length || 0)}{' '}
+          {(totalItens !== undefined ? totalItens : (pontos?.length || 0)) === 1 ? 'ponto encontrado' : 'pontos encontrados'}
         </span>
       </div>
       <div className="lista-resultados">
-        {pontos.map((ponto) => (
+        {pontos?.map((ponto) => (
           <ItemResultado 
             key={ponto.id} 
             ponto={ponto}
@@ -64,6 +75,14 @@ const ListaResultados: React.FC<ListaResultadosProps> = ({
           />
         ))}
       </div>
+      {paginaAtual && totalPaginas && totalItens !== undefined && onMudarPagina && (
+        <Paginacao
+          paginaAtual={paginaAtual}
+          totalPaginas={totalPaginas}
+          totalItens={totalItens}
+          onMudarPagina={onMudarPagina}
+        />
+      )}
     </div>
   );
 };

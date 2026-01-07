@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { PontoTuristico, NovoPontoTuristico } from '../types/PontoTuristico';
+import { PontoTuristico, NovoPontoTuristico, PaginatedResponse } from '../types/PontoTuristico';
 
 // Configuração da URL base da API
 const API_BASE_URL = 'https://localhost:7165/api';
@@ -11,11 +11,15 @@ const api = axios.create({
   },
 });
 
-// Função para buscar pontos turísticos
-export const buscarPontosTuristicos = async (termo: string = ''): Promise<PontoTuristico[]> => {
+// Função para buscar pontos turísticos com paginação
+export const buscarPontosTuristicos = async (
+  termo: string = '', 
+  page: number = 1, 
+  pageSize: number = 10
+): Promise<PaginatedResponse | PontoTuristico[]> => {
   try {
-    const response = await api.get<PontoTuristico[]>('/PontosTuristicos', {
-      params: { termo },
+    const response = await api.get('/PontosTuristicos', {
+      params: { termo, page, pageSize },
     });
     return response.data;
   } catch (error) {

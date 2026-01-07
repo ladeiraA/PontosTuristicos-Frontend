@@ -15,3 +15,10 @@ export interface NovoPontoTuristico {
   cidade: string;
   estado: string;
 }
+
+export interface PaginatedResponse {
+  items: PontoTuristico[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+}

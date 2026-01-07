@@ -13,17 +13,42 @@ const Pesquisa: React.FC = () => {
   const [pontos, setPontos] = useState<PontoTuristico[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [buscaRealizada, setBuscaRealizada] = useState(false);
+  
+  // Estados de paginação
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const [totalItens, setTotalItens] = useState(0);
+  const pageSize = 5; // Itens por página
 
   // Função reutilizável para carregar pontos
-  const carregarPontos = async (termoBusca: string = '') => {
+  const carregarPontos = async (termoBusca: string = '', pagina: number = 1) => {
     setCarregando(true);
-    setBuscaRealizada(true);
     try {
-      const resultados = await buscarPontosTuristicos(termoBusca);
-      setPontos(resultados);
+      const resultado = await buscarPontosTuristicos(termoBusca, pagina, pageSize);
+      
+      // Verifica se a API retornou objeto paginado ou array direto
+      if (Array.isArray(resultado)) {
+        // API retornou array direto (sem paginação no backend)
+        setPontos(resultado);
+        setTotalPaginas(1);
+        setTotalItens(resultado.length);
+        setPaginaAtual(1);
+      } else {
+        // API retornou objeto paginado
+        setPontos(resultado.items || []);
+        setTotalPaginas(resultado.totalPages || 0);
+        setTotalItens(resultado.totalItems || 0);
+        setPaginaAtual(resultado.currentPage || 1);
+      }
+      
+      setBuscaRealizada(true);
     } catch (error) {
+      console.error('Erro ao buscar:', error);
       alert('Erro ao buscar pontos turísticos. Verifique sua conexão e tente novamente.');
       setPontos([]);
+      setTotalPaginas(0);
+      setTotalItens(0);
+      setBuscaRealizada(true);
     } finally {
       setCarregando(false);
     }
@@ -35,7 +60,13 @@ const Pesquisa: React.FC = () => {
   }, []);
 
   const handleBuscar = async () => {
-    carregarPontos(termo);
+    setPaginaAtual(1); // Resetar para primeira página ao fazer nova busca
+    carregarPontos(termo, 1);
+  };
+
+  const handleMudarPagina = (novaPagina: number) => {
+    carregarPontos(termo, novaPagina);
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll suave para o topo
   };
 
   const handleCadastrar = () => {
@@ -49,8 +80,8 @@ const Pesquisa: React.FC = () => {
   const handleExcluir = async (id: number) => {
     try {
       await excluirPontoTuristico(id);
-      // Remove o item da lista sem recarregar
-      setPontos(pontos.filter(ponto => ponto.id !== id));
+      // Recarregar a página atual após exclusão
+      carregarPontos(termo, paginaAtual);
     } catch (error) {
       alert('Erro ao excluir ponto turístico. Tente novamente.');
     }
@@ -71,6 +102,10 @@ const Pesquisa: React.FC = () => {
         buscaRealizada={buscaRealizada}
         onEditar={handleEditar}
         onExcluir={handleExcluir}
+        paginaAtual={paginaAtual}
+        totalPaginas={totalPaginas}
+        totalItens={totalItens}
+        onMudarPagina={handleMudarPagina}
       />
     </div>
   );
