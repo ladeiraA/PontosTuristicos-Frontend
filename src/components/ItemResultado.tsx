@@ -15,9 +15,7 @@ const ItemResultado: React.FC<ItemResultadoProps> = ({ ponto, onEditar, onExclui
   };
 
   const handleExcluir = () => {
-    if (window.confirm(`Tem certeza que deseja excluir "${ponto.nome}"?`)) {
-      onExcluir(ponto.id);
-    }
+    onExcluir(ponto.id);
   };
 
   return (
