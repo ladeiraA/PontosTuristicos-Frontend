@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import ListaResultados from '../components/ListaResultados';
@@ -21,7 +22,7 @@ const Pesquisa: React.FC = () => {
   const pageSize = 5; // Itens por página
 
   // Função reutilizável para carregar pontos
-  const carregarPontos = async (termoBusca: string = '', pagina: number = 1) => {
+  const carregarPontos = async (termoBusca: string = '', pagina: number = 1, mostrarErro: boolean = true) => {
     setCarregando(true);
     try {
       const resultado = await buscarPontosTuristicos(termoBusca, pagina, pageSize);
@@ -44,7 +45,14 @@ const Pesquisa: React.FC = () => {
       setBuscaRealizada(true);
     } catch (error) {
       console.error('Erro ao buscar:', error);
-      alert('Erro ao buscar pontos turísticos. Verifique sua conexão e tente novamente.');
+      if (mostrarErro) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Erro ao buscar pontos turísticos. Verifique sua conexão e tente novamente.',
+          confirmButtonColor: '#3498db'
+        });
+      }
       setPontos([]);
       setTotalPaginas(0);
       setTotalItens(0);
@@ -56,7 +64,7 @@ const Pesquisa: React.FC = () => {
 
   // Busca automática ao carregar a página
   useEffect(() => {
-    carregarPontos();
+    carregarPontos('', 1, false);
   }, []);
 
   const handleBuscar = async () => {
@@ -78,12 +86,37 @@ const Pesquisa: React.FC = () => {
   };
 
   const handleExcluir = async (id: number) => {
-    try {
-      await excluirPontoTuristico(id);
-      // Recarregar a página atual após exclusão
-      carregarPontos(termo, paginaAtual);
-    } catch (error) {
-      alert('Erro ao excluir ponto turístico. Tente novamente.');
+    const result = await Swal.fire({
+      icon: 'warning',
+      title: 'Confirmar exclusão',
+      text: 'Tem certeza que deseja excluir este ponto turístico?',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, excluir',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#e74c3c',
+      cancelButtonColor: '#95a5a6'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await excluirPontoTuristico(id);
+        await Swal.fire({
+          icon: 'success',
+          title: 'Excluído!',
+          text: 'Ponto turístico excluído com sucesso',
+          confirmButtonColor: '#3498db',
+          timer: 2000
+        });
+        // Recarregar a página atual após exclusão
+        carregarPontos(termo, paginaAtual);
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro',
+          text: 'Erro ao excluir ponto turístico. Tente novamente.',
+          confirmButtonColor: '#3498db'
+        });
+      }
     }
   };
 

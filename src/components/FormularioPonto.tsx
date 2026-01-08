@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NovoPontoTuristico, PontoTuristico } from '../types/PontoTuristico';
+import Swal from 'sweetalert2';
 import './FormularioPonto.css';
 
 interface FormularioPontoProps {
@@ -14,6 +15,8 @@ const ESTADOS_BRASIL = [
   'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
 ];
 
+const MAX_CARACTERES = 100;
+
 const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar, pontoInicial }) => {
   const [nome, setNome] = useState('');
   const [cidade, setCidade] = useState('');
@@ -21,6 +24,10 @@ const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar,
   const [referencia, setReferencia] = useState('');
   const [descricao, setDescricao] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [focoNome, setFocoNome] = useState(false);
+  const [focoCidade, setFocoCidade] = useState(false);
+  const [focoReferencia, setFocoReferencia] = useState(false);
+  const [focoDescricao, setFocoDescricao] = useState(false);
 
   // Carrega os dados iniciais quando está editando
   useEffect(() => {
@@ -36,16 +43,43 @@ const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar,
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!nome || !cidade || !estado || !referencia || !descricao) {
-      alert('Por favor, preencha todos os campos');
+    if (!nome.trim() || !cidade.trim() || !estado || !referencia.trim() || !descricao.trim()) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campos obrigatórios',
+        text: 'Por favor, preencha todos os campos corretamente',
+        confirmButtonColor: '#3498db'
+      });
+      return;
+    }
+
+    if (nome.length > MAX_CARACTERES || cidade.length > MAX_CARACTERES || 
+        referencia.length > MAX_CARACTERES || descricao.length > MAX_CARACTERES) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Limite excedido',
+        text: `Todos os campos devem ter no máximo ${MAX_CARACTERES} caracteres`,
+        confirmButtonColor: '#3498db'
+      });
       return;
     }
 
     setEnviando(true);
     try {
-      await onSubmit({ nome, cidade, estado, referencia, descricao });
+      await onSubmit({ 
+        nome: nome.trim(), 
+        cidade: cidade.trim(), 
+        estado, 
+        referencia: referencia.trim(), 
+        descricao: descricao.trim() 
+      });
     } catch (error) {
-      alert('Erro ao cadastrar ponto turístico. Tente novamente.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Erro ao cadastrar ponto turístico. Tente novamente.',
+        confirmButtonColor: '#3498db'
+      });
     } finally {
       setEnviando(false);
     }
@@ -60,10 +94,18 @@ const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar,
           type="text"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
+          onFocus={() => setFocoNome(true)}
+          onBlur={() => setFocoNome(false)}
           placeholder="Ex: Cristo Redentor"
+          maxLength={MAX_CARACTERES}
           required
           disabled={enviando}
         />
+        {focoNome && (
+          <small className='contador'>
+            {nome.length}/{MAX_CARACTERES} caracteres
+          </small>
+        )}
       </div>
 
       <div className="form-row">
@@ -74,10 +116,18 @@ const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar,
             type="text"
             value={cidade}
             onChange={(e) => setCidade(e.target.value)}
+            onFocus={() => setFocoCidade(true)}
+            onBlur={() => setFocoCidade(false)}
             placeholder="Ex: Rio de Janeiro"
+            maxLength={MAX_CARACTERES}
             required
             disabled={enviando}
           />
+          {focoCidade && (
+            <small className='contador'>
+              {cidade.length}/{MAX_CARACTERES} caracteres
+            </small>
+          )}
         </div>
 
         <div className="form-group">
@@ -106,10 +156,18 @@ const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar,
           type="text"
           value={referencia}
           onChange={(e) => setReferencia(e.target.value)}
+          onFocus={() => setFocoReferencia(true)}
+          onBlur={() => setFocoReferencia(false)}
           placeholder="Ex: Morro do Corcovado"
+          maxLength={MAX_CARACTERES}
           required
           disabled={enviando}
         />
+        {focoReferencia && (
+          <small className='contador'>
+            {referencia.length}/{MAX_CARACTERES} caracteres
+          </small>
+        )}
       </div>
 
       <div className="form-group">
@@ -118,11 +176,19 @@ const FormularioPonto: React.FC<FormularioPontoProps> = ({ onSubmit, onCancelar,
           id="descricao"
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
+          onFocus={() => setFocoDescricao(true)}
+          onBlur={() => setFocoDescricao(false)}
           placeholder="Descreva o ponto turístico..."
           rows={5}
+          maxLength={MAX_CARACTERES}
           required
           disabled={enviando}
         />
+        {focoDescricao && (
+          <small className='contador'>
+            {descricao.length}/{MAX_CARACTERES} caracteres
+          </small>
+        )}
       </div>
 
       <div className="form-actions">

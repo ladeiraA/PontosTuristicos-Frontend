@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import Header from '../components/Header';
 import FormularioPonto from '../components/FormularioPonto';
 import { NovoPontoTuristico, PontoTuristico } from '../types/PontoTuristico';
@@ -29,11 +30,21 @@ const Cadastro: React.FC = () => {
           if (ponto) {
             setPontoAtual(ponto);
           } else {
-            alert('Ponto turístico não encontrado');
+            Swal.fire({
+              icon: 'error',
+              title: 'Não encontrado',
+              text: 'Ponto turístico não encontrado',
+              confirmButtonColor: '#3498db'
+            });
             navigate('/');
           }
         } catch (error) {
-          alert('Erro ao carregar ponto turístico');
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Erro ao carregar ponto turístico',
+            confirmButtonColor: '#3498db'
+          });
           navigate('/');
         } finally {
           setCarregando(false);
@@ -47,10 +58,22 @@ const Cadastro: React.FC = () => {
   const handleSubmit = async (ponto: NovoPontoTuristico) => {
     if (isEdicao && id) {
       await atualizarPontoTuristico(parseInt(id), ponto);
-      alert('Ponto turístico atualizado com sucesso!');
+      await Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: 'Ponto turístico atualizado com sucesso!',
+        confirmButtonColor: '#3498db',
+        timer: 2000
+      });
     } else {
       await cadastrarPontoTuristico(ponto);
-      alert('Ponto turístico cadastrado com sucesso!');
+      await Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: 'Ponto turístico cadastrado com sucesso!',
+        confirmButtonColor: '#3498db',
+        timer: 2000
+      });
     }
     navigate('/');
   };
