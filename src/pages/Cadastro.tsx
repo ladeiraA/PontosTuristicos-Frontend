@@ -23,7 +23,7 @@ const Cadastro: React.FC = () => {
           // Busca todos os pontos e filtra pelo ID
           const resultado = await buscarPontosTuristicos('');
           
-          // Verifica se a API retornou objeto paginado ou array direto
+          // Verifica se a API retornou objeto paginado
           const pontos = Array.isArray(resultado) ? resultado : resultado.items;
           const ponto = pontos.find((p: PontoTuristico) => p.id === parseInt(id));
           

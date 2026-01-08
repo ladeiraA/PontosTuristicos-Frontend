@@ -21,15 +21,13 @@ const Pesquisa: React.FC = () => {
   const [totalItens, setTotalItens] = useState(0);
   const pageSize = 5; // Itens por página
 
-  // Função reutilizável para carregar pontos
   const carregarPontos = async (termoBusca: string = '', pagina: number = 1, mostrarErro: boolean = true) => {
     setCarregando(true);
     try {
       const resultado = await buscarPontosTuristicos(termoBusca, pagina, pageSize);
       
-      // Verifica se a API retornou objeto paginado ou array direto
       if (Array.isArray(resultado)) {
-        // API retornou array direto (sem paginação no backend)
+        // API retornou array direto
         setPontos(resultado);
         setTotalPaginas(1);
         setTotalItens(resultado.length);
@@ -74,7 +72,7 @@ const Pesquisa: React.FC = () => {
 
   const handleMudarPagina = (novaPagina: number) => {
     carregarPontos(termo, novaPagina);
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll suave para o topo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCadastrar = () => {
